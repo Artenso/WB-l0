@@ -1,0 +1,17 @@
+{
+    "nats_config":{
+        "cluster_id":"test-cluster",
+        "client_id":"consumer"
+    },
+    "http_config":{
+        "http_port":":8080"
+    },
+    "db_config":{
+        "db":"postgres",
+        "user":"artenso",
+        "password":"artenso_password",
+        "host":"127.0.0.1",
+        "port":"5432",
+        "db_name":"orders_storage"
+    }
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о заказе</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .order-info {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Получить информацию о заказе</h1>
+        <div class="form-group">
+            <label for="orderId">Введите ID заказа:</label>
+            <input type="text" id="orderId" placeholder="ID заказа">
+        </div>
+        <button onclick="getOrderInfo()">Получить информацию</button>
+        <div class="order-info" id="orderInfo">
+            <!-- Здесь будет отображена информация о заказе -->
+        </div>
+    </div>
+
+    <script>
+        async function getOrderInfo() {
+            const orderId = document.getElementById('orderId').value;
+            const orderInfoDiv = document.getElementById('orderInfo');
+
+            try {
+                const response = await fetch(`/order/${orderId}`);
+                if (!response.ok) {
+                    throw new Error('Ошибка при получении информации о заказе');
+                }
+
+                const orderData = await response.json();
+                orderInfoDiv.innerHTML = `
+                    <h2>Информация о заказе</h2>
+                    <p><strong>Order UID:</strong> ${orderData.order_uid}</p>
+                    <p><strong>Track Number:</strong> ${orderData.track_number}</p>
+                    <p><strong>Entry:</strong> ${orderData.entry}</p>
+                    <h3>Delivery Information</h3>
+                    <p><strong>Name:</strong> ${orderData.delivery.name}</p>
+                    <p><strong>Phone:</strong> ${orderData.delivery.phone}</p>
+                    <p><strong>Zip:</strong> ${orderData.delivery.zip}</p>
+                    <p><strong>City:</strong> ${orderData.delivery.city}</p>
+                    <p><strong>Address:</strong> ${orderData.delivery.address}</p>
+                    <p><strong>Region:</strong> ${orderData.delivery.region}</p>
+                    <p><strong>Email:</strong> ${orderData.delivery.email}</p>
+                    <h3>Payment Information</h3>
+                    <p><strong>Transaction:</strong> ${orderData.payment.transaction}</p>
+                    <p><strong>Currency:</strong> ${orderData.payment.currency}</p>
+                    <p><strong>Provider:</strong> ${orderData.payment.provider}</p>
+                    <p><strong>Amount:</strong> ${orderData.payment.amount}</p>
+                    <p><strong>Payment Date:</strong> ${new Date(orderData.payment.payment_dt * 1000).toLocaleString()}</p>
+                    <p><strong>Bank:</strong> ${orderData.payment.bank}</p>
+                    <p><strong>Delivery Cost:</strong> ${orderData.payment.delivery_cost}</p>
+                    <p><strong>Goods Total:</strong> ${orderData.payment.goods_total}</p>
+                    <p><strong>Custom Fee:</strong> ${orderData.payment.custom_fee}</p>
+                    <h3>Items</h3>
+                    ${orderData.items.map(item => `
+                        <div>
+                            <p><strong>CHRT ID:</strong> ${item.chrt_id}</p>
+                            <p><strong>Track Number:</strong> ${item.track_number}</p>
+                            <p><strong>Price:</strong> ${item.price}</p>
+                            <p><strong>RID:</strong> ${item.rid}</p>
+                            <p><strong>Name:</strong> ${item.name}</p>
+                            <p><strong>Sale:</strong> ${item.sale}</p>
+                            <p><strong>Size:</strong> ${item.size}</p>
+                            <p><strong>Total Price:</strong> ${item.total_price}</p>
+                            <p><strong>NM ID:</strong> ${item.nm_id}</p>
+                            <p><strong>Brand:</strong> ${item.brand}</p>
+                            <p><strong>Status:</strong> ${item.status}</p>
+                        </div>
+                    `).join('')}
+                    <h3>Additional Information</h3>
+                    <p><strong>Locale:</strong> ${orderData.locale}</p>
+                    <p><strong>Customer ID:</strong> ${orderData.customer_id}</p>
+                    <p><strong>Delivery Service:</strong> ${orderData.delivery_service}</p>
+                    <p><strong>Shard Key:</strong> ${orderData.shardkey}</p>
+                    <p><strong>SM ID:</strong> ${orderData.sm_id}</p>
+                    <p><strong>Date Created:</strong> ${new Date(orderData.date_created).toLocaleString()}</p>
+                    <p><strong>OOF Shard:</strong> ${orderData.oof_shard}</p>
+                `;
+            } catch (error) {
+                orderInfoDiv.innerHTML = `<p style="color: red;">${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

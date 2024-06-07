@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine3.15
+    container_name: "pg_storage"
+    environment:
+      - "POSTGRES_DB=orders_storage"
+      - "POSTGRES_USER=artenso"
+      - "POSTGRES_PASSWORD=artenso_password"
+    ports:
+      - "5432:5432"
+    depends_on:
+      - nats-streaming
+
+  nats-streaming:
+    image: nats-streaming:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    
+
